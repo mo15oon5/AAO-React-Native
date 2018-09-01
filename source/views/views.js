@@ -61,8 +61,7 @@ export const allViews: ViewType[] = [
 		gradient: c.magentaToPurple,
 	},
 	{
-		type: 'url',
-		url: 'https://www.stolaf.edu/personal/index.cfm',
+		type: 'view',
 		view: 'DirectoryView',
 		title: 'Directory',
 		icon: 'v-card',
