@@ -1,10 +1,11 @@
 // @flow
 
 import * as React from 'react'
+import {timezone} from '@frogpond/constants'
 import {StyleSheet, Text, Platform} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
-import {Badge} from '../../../building-hours/detail/badge'
+import {SolidBadge as Badge} from '@frogpond/badge'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
 import {
@@ -21,8 +22,6 @@ import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
-
-const CENTRAL_TZ = 'America/Winnipeg'
 
 const Container = glamorous.scrollView({
 	paddingVertical: 6,
@@ -105,9 +104,9 @@ function Schedule({course}: {course: CourseType}) {
 	const schedule = map(groupedByDay, (offerings, day) => {
 		const timesFormatted = offerings.map(offering => {
 			const start = moment
-				.tz(offering.start, 'H:mm', CENTRAL_TZ)
+				.tz(offering.start, 'H:mm', timezone())
 				.format('h:mm A')
-			const end = moment.tz(offering.end, 'H:mm', CENTRAL_TZ).format('h:mm A')
+			const end = moment.tz(offering.end, 'H:mm', timezone()).format('h:mm A')
 			return `${start} – ${end}`
 		})
 		const locations = offerings.map(offering => offering.location)
@@ -139,8 +138,36 @@ function Schedule({course}: {course: CourseType}) {
 	)
 }
 
+function Notes({course}: {course: CourseType}) {
+	if (!course.notes) {
+		return null
+	}
+
+	let notesText = course.notes.join(' ')
+
+	const notes =
+		Platform.OS === 'ios' ? (
+			<SelectableCell text={notesText} />
+		) : (
+			<Cell
+				cellContentView={
+					<Text selectable={true} style={styles.chunk}>
+						{notesText}
+					</Text>
+				}
+			/>
+		)
+
+	return <Section header="NOTES">{notes}</Section>
+}
+
 function Description({course}: {course: CourseType}) {
-	let descText = course.description ? course.description[0] : ''
+	if (!course.description) {
+		return null
+	}
+
+	let descText = course.description[0]
+
 	const description =
 		Platform.OS === 'ios' ? (
 			<SelectableCell text={descText} />
@@ -154,13 +181,16 @@ function Description({course}: {course: CourseType}) {
 			/>
 		)
 
-	return course.description ? (
-		<Section header="DESCRIPTION">{description}</Section>
-	) : null
+	return <Section header="DESCRIPTION">{description}</Section>
 }
 
 type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {course: CourseType}}},
+}
+
+const BGCOLORS = {
+	Open: c.moneyGreen,
+	Closed: c.salmon,
 }
 
 export class CourseDetailView extends React.PureComponent<Props> {
@@ -178,10 +208,11 @@ export class CourseDetailView extends React.PureComponent<Props> {
 			<Container>
 				<Header>{course.title || course.name}</Header>
 				<SubHeader>{deptNum(course)}</SubHeader>
-				<Badge status={status} />
+				<Badge accentColor={BGCOLORS[status]} status={status} />
 				<TableView>
 					<Information course={course} />
 					<Schedule course={course} />
+					<Notes course={course} />
 					<Description course={course} />
 				</TableView>
 			</Container>

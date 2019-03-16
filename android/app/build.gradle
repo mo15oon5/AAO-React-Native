@@ -113,7 +113,6 @@ android {
         manifestPlaceholders = [
             manifestApplicationId: applicationId,
             BUGSNAG_KEY: System.getenv("BUGSNAG_KEY") ?: "",
-            onesignal_app_id: "a46c6f2f-a240-4908-a359-801911e9b9ea",
             onesignal_google_project_number: "REMOTE",
         ]
 
@@ -189,7 +188,7 @@ android {
         resolutionStrategy.force "com.android.support:support-media-compat:$ANDROID_SUPPORT_LIBRARY_VERSION"
         resolutionStrategy.force "com.android.support:support-v4:$ANDROID_SUPPORT_LIBRARY_VERSION"
 
-        resolutionStrategy.force 'org.webkit:android-jsc:r224109'
+        resolutionStrategy.force 'org.webkit:android-jsc:r236355'
     }
 }
 
@@ -234,7 +233,7 @@ dependencies {
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-custom-tabs')
     implementation project(':react-native-device-info')
-    implementation project(':react-native-google-analytics-bridge')
+    implementation project(':react-native-gesture-handler')
     implementation project(':react-native-keychain')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-network-info')

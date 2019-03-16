@@ -1,10 +1,12 @@
 // @flow
 
 import React from 'react'
+import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
 import {connect} from 'react-redux'
 import {type ReduxState} from '../../redux'
 import {updatePrintJobs} from '../../redux/parts/stoprint'
+import {type LoginStateEnum} from '../../redux/parts/login'
 import {type PrintJob, STOPRINT_HELP_PAGE} from '../../lib/stoprint'
 import {
 	ListRow,
@@ -21,13 +23,15 @@ import {StoPrintErrorView, StoPrintNoticeView} from './components'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
+import {getTimeRemaining} from './lib'
+import {Timer} from '@frogpond/timer'
 
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
 	jobs: Array<PrintJob>,
 	error: ?string,
-	loginState: string,
+	status: LoginStateEnum,
 }
 
 type ReduxDispatchProps = {
@@ -61,13 +65,12 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		this.setState(() => ({loading: false, initialLoadComplete: true}))
 	}
 
-	refresh = async (): any => {
+	refresh = async () => {
 		let start = Date.now()
 
 		this.setState(() => ({loading: true}))
 
 		await this.fetchData()
-		// console.log('data returned')
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
 		let elapsed = start - Date.now()
@@ -92,14 +95,23 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 	}
 
 	renderItem = ({item}: {item: PrintJob}) => (
-		<ListRow onPress={() => this.handleJobPress(item)}>
-			<Title>{item.documentName}</Title>
-			<Detail>
-				{item.usageTimeFormatted} {' • '} {item.usageCostFormatted} {' •  '}
-				{item.totalPages} {item.totalPages === 1 ? 'page' : 'pages'} {'\n'}
-				{item.statusFormatted}
-			</Detail>
-		</ListRow>
+		<Timer
+			interval={60000}
+			moment={true}
+			render={({now}) => (
+				<ListRow onPress={() => this.handleJobPress(item)}>
+					<Title>{item.documentName}</Title>
+					<Detail>
+						Expires {getTimeRemaining(now, item.usageTimeFormatted)}
+						{' • '}
+						{item.usageCostFormatted}
+						{' • '}
+						{item.totalPages} {item.totalPages === 1 ? 'page' : 'pages'}
+					</Detail>
+				</ListRow>
+			)}
+			timezone={timezone()}
+		/>
 	)
 
 	renderSectionHeader = ({section: {title}}: any) => (
@@ -107,9 +119,10 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 	)
 
 	render() {
-		if (this.props.loginState === 'checking') {
+		if (this.props.status === 'checking') {
 			return <LoadingView text="Logging in…" />
 		}
+
 		if (this.props.error) {
 			return (
 				<StoPrintErrorView
@@ -119,10 +132,12 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 				/>
 			)
 		}
+
 		if (this.state.loading && !this.state.initialLoadComplete) {
 			return <LoadingView text="Fetching a list of stoPrint Jobs…" />
 		}
-		if (this.props.loginState !== 'logged-in') {
+
+		if (this.props.status !== 'logged-in') {
 			return (
 				<StoPrintNoticeView
 					buttonText="Open Settings"
@@ -132,7 +147,9 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 					text="You must be logged in to your St. Olaf account to access this feature"
 				/>
 			)
-		} else if (this.props.jobs.length === 0) {
+		}
+
+		if (this.props.jobs.length === 0) {
 			const instructions =
 				Platform.OS === 'android'
 					? 'using the Mobility Print app'
@@ -150,7 +167,8 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 				/>
 			)
 		}
-		const grouped = groupBy(this.props.jobs, j => j.statusFormatted || 'Other')
+
+		let grouped = groupBy(this.props.jobs, j => j.statusFormatted || 'Other')
 		let groupedJobs = toPairs(grouped).map(([title, data]) => ({
 			title,
 			data,
@@ -158,11 +176,12 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		let sortedGroupedJobs = sortBy(groupedJobs, [
 			group => group.title !== 'Pending Release', // puts 'Pending Release' jobs at the top
 		])
+
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				keyExtractor={this.keyExtractor}
-				onRefresh={this.refresh}
+				onRefresh={(this.refresh: any)}
 				refreshing={this.state.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
@@ -176,7 +195,7 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 	return {
 		jobs: state.stoprint ? state.stoprint.jobs : [],
 		error: state.stoprint ? state.stoprint.jobsError : null,
-		loginState: state.settings ? state.settings.loginState : 'logged-out',
+		status: state.login ? state.login.status : 'logged-out',
 	}
 }
 

@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'flex-end',
 	},
-	icons: {
+	iconsList: {
 		marginHorizontal: 3,
 		width: 15,
 		height: 15,
@@ -35,7 +35,12 @@ export function DietaryTags({
 
 	// turn the remaining items into images
 	let tags = map(filtered, (dietaryIcon, key) => (
-		<Image key={key} source={{uri: dietaryIcon.image}} style={styles.icons} />
+		<Image
+			key={key}
+			accessibilityIgnoresInvertColors={true}
+			source={{uri: dietaryIcon.image}}
+			style={styles.iconsList}
+		/>
 	))
 
 	return <View style={[styles.container, style]}>{tags}</View>

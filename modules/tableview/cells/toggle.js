@@ -10,19 +10,30 @@ type PropsType = {
 	value: boolean,
 	onChange: (val: boolean) => any,
 	theme: AppTheme,
+	detail?: string,
+	disabled?: boolean,
 }
 
-function CellToggle({value, onChange, label, theme}: PropsType) {
+function CellToggle(props: PropsType) {
+	let {value, onChange, label, detail, theme, disabled} = props
+
 	let toggle = (
 		<Switch
-			onTintColor={theme.switchTintOn}
+			disabled={disabled}
 			onValueChange={onChange}
-			tintColor={theme.switchTintOff}
+			trackColor={{true: theme.switchTintOn, false: theme.switchTintOff}}
 			value={value}
 		/>
 	)
 
-	return <Cell cellAccessoryView={toggle} title={label} />
+	return (
+		<Cell
+			cellAccessoryView={toggle}
+			cellStyle={detail ? 'Subtitle' : 'Basic'}
+			detail={detail}
+			title={label}
+		/>
+	)
 }
 
 export const RawCellToggle = CellToggle

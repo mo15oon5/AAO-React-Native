@@ -7,9 +7,9 @@ import {
 	BuildingHoursScheduleEditorView,
 	BuildingHoursView,
 } from '../views/building-hours'
-import CalendarView, {EventDetail as EventDetailView} from '../views/calendar'
+import CalendarView from '../views/calendar'
+import {EventDetail as EventDetailView} from '@frogpond/event-list'
 import {ContactsDetailView, ContactsView} from '../views/contacts'
-import CreditsView from '../views/settings/credits'
 import {
 	DictionaryDetailView,
 	DictionaryEditorView,
@@ -23,7 +23,6 @@ import {
 	CourseSearchResultsView,
 	JobDetailView,
 } from '../views/sis'
-import LegalView from '../views/settings/legal'
 import {
 	CarletonBurtonMenuScreen,
 	CarletonLDCMenuScreen,
@@ -31,10 +30,17 @@ import {
 	CarletonWeitzMenuScreen,
 	MenusView,
 } from '../views/menus'
+import {MenuItemDetailView} from '@frogpond/food-menu/food-item-detail'
 import NewsView from '../views/news'
-import PrivacyView from '../views/settings/privacy'
-import SettingsView from '../views/settings'
-import {IconSettingsView} from '../views/settings/icon'
+import {
+	SettingsView,
+	IconSettingsView,
+	CreditsView,
+	DebugView,
+	LegalView,
+	PrivacyView,
+	PushNotificationsSettingsView,
+} from '../views/settings'
 import SISView from '../views/sis'
 import StreamingView, {
 	KRLXScheduleView,
@@ -63,6 +69,7 @@ export const routes = {
 	ContactsView: {screen: ContactsView},
 	ContactsDetailView: {screen: ContactsDetailView},
 	CreditsView: {screen: CreditsView},
+	DebugView: {screen: DebugView},
 	DictionaryDetailView: {screen: DictionaryDetailView},
 	DictionaryView: {screen: DictionaryView},
 	DictionaryEditorView: {screen: DictionaryEditorView},
@@ -77,6 +84,7 @@ export const routes = {
 	PrivacyView: {screen: PrivacyView},
 	SettingsView: {screen: SettingsView},
 	IconSettingsView: {screen: IconSettingsView},
+	PushNotificationsSettingsView: {screen: PushNotificationsSettingsView},
 	SISView: {screen: SISView},
 	CourseSearchResultsView: {screen: CourseSearchResultsView},
 	CourseDetailView: {screen: CourseDetailView},
@@ -92,6 +100,7 @@ export const routes = {
 	CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
 	CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
 	CarletonSaylesMenuView: {screen: CarletonSaylesMenuScreen},
+	MenuItemDetailView: {screen: MenuItemDetailView},
 	PrintJobsView: {screen: PrintJobsView},
 	PrinterListView: {screen: PrinterListView},
 	PrintJobReleaseView: {screen: PrintJobReleaseView},

@@ -18,12 +18,12 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
-import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.mapbox.rctmgl.RCTMGLPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,13 +46,13 @@ public class MainApplication extends Application implements ReactApplication {
         BugsnagReactNative.getPackage(),
         new CalendarEventsPackage(),
         new CustomTabsPackage(),
-        new GoogleAnalyticsBridgePackage(),
         new KeychainPackage(),
         new LinearGradientPackage(),
         new RCTMGLPackage(),
         new ReactNativeOneSignalPackage(),
         new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
+        new RNGestureHandlerPackage(),
         new RNNetworkInfoPackage(),
         new VectorIconsPackage()
       );

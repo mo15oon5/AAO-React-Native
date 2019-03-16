@@ -57,9 +57,8 @@ function TouchableButton({onPress, label, children, tint, gradient}) {
 function TouchableWrapper({onPress, children, label}) {
 	return (
 		<Touchable
-			accessibilityComponentType="button"
 			accessibilityLabel={label}
-			accessibilityTraits="button"
+			accessibilityRole="button"
 			accessible={true}
 			highlight={false}
 			onPress={onPress}
@@ -78,7 +77,7 @@ function Tint({tint = 'black', gradient, children}) {
 	return (
 		<LinearGradient
 			colors={gradient}
-			end={{x: 1, y: 0.85}}
+			end={{x: 0, y: 0.85}}
 			start={{x: 0, y: 0.05}}
 			style={styles.button}
 		>
